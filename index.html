@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PocketFarm</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial;
+      background: #0d0f14;
+      color: #e6e8ee;
+    }
+    .container {
+      max-width: 420px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+    h1 {
+      text-align: center;
+      font-size: 22px;
+      margin-bottom: 16px;
+    }
+    .card {
+      background: #151822;
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+    }
+    .section-title {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+    .btn-primary,
+    .btn-danger,
+    .btn-secondary {
+      width: 100%;
+      height: 44px;
+      border: none;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-primary { background: #3ddc97; }
+    .btn-danger { background: #ff6b6b; margin-bottom: 8px; }
+    .btn-secondary { background: #2b2f3a; color: #e6e8ee; }
+    .actions { display: flex; flex-direction: column; }
+    .plot {
+      background: #0f1220;
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 8px;
+      font-size: 13px;
+    }
+    .rank-item {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      margin-bottom: 6px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🌱 PocketFarm</h1>
+
+    <!-- E2 每日签到 -->
+    <div class="card">
+      <div class="section-title">每日签到 🌞</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;background:#121620;border-radius:12px;padding:12px 14px;margin-bottom:14px">
+        <div>
+          <div style="font-size:14px;font-weight:600">今日签到状态</div>
+          <div id="checkinStatus" style="font-size:12px;color:#9aa3b2">未签到</div>
+        </div>
+        <button id="checkinBtn" class="btn-primary" style="width:88px">签到</button>
+      </div>
+    </div>
+
+    <!-- 我的农场 -->
+    <div class="card">
+      <div class="section-title">我的农场</div>
+      <div class="plot">🥕 胡萝卜 · <span>成长中</span></div>
+      <div class="plot">🍓 草莓 · <span>成长中</span></div>
+      <div class="plot">🌽 玉米 · <span>成长中</span></div>
+    </div>
+
+    <!-- 偷菜 & 防守 -->
+    <div class="card">
+      <div class="section-title">去偷菜 🥷</div>
+      <div class="actions">
+        <button class="btn-danger" id="stealBtn">偷好友农场</button>
+        <button class="btn-secondary" id="defenseBtn">开启防守 🛡️</button>
+      </div>
+      <div id="defenseStatus" style="margin-top:10px;font-size:12px;color:#9aa3b2">防守未开启</div>
+    </div>
+
+    <!-- 排行榜（赛季） -->
+    <div class="card">
+      <div class="section-title">🏆 本周排行榜 · Season 1</div>
+      <div class="rank-item"><span>🥇 Farmer#A9</span><span>320</span></div>
+      <div class="rank-item"><span>🥈 Farmer#B2</span><span>295</span></div>
+      <div class="rank-item"><span>🥉 Farmer#C1</span><span>270</span></div>
+      <div class="rank-item"><span>You</span><span id="myScore">120</span></div>
+    </div>
+  </div>
+
+  <script>
+    // ========== E2 每日签到 ==========
+    const today = new Date().toDateString();
+    const lastCheckin = localStorage.getItem('pocketfarm_checkin');
+    const checkinBtn = document.getElementById('checkinBtn');
+    const checkinStatus = document.getElementById('checkinStatus');
+
+    function updateCheckinUI() {
+      if (lastCheckin === today) {
+        checkinStatus.innerText = '已签到，作物正在成长 🌱';
+        checkinBtn.disabled = true;
+        checkinBtn.style.opacity = 0.6;
+      }
+    }
+    updateCheckinUI();
+
+    checkinBtn.onclick = () => {
+      localStorage.setItem('pocketfarm_checkin', today);
+      checkinStatus.innerText = '签到成功！作物成长 +1 🌿';
+      checkinBtn.disabled = true;
+      checkinBtn.style.opacity = 0.6;
+      document.querySelectorAll('.plot span').forEach(p => p.innerText = '即将成熟');
+    };
+
+    // ========== C1 + D2 偷菜 & 连胜 ==========
+    let streak = parseInt(localStorage.getItem('pocketfarm_streak') || '0');
+    document.getElementById('stealBtn').onclick = () => {
+      const success = Math.random() > 0.4;
+      if (success) {
+        streak += 1;
+        localStorage.setItem('pocketfarm_streak', streak);
+        alert(`✅ 偷菜成功！连胜 ${streak} 次`);
+      } else {
+        streak = 0;
+        localStorage.setItem('pocketfarm_streak', '0');
+        alert('❌ 被发现了，连胜中断');
+      }
+    };
+
+    // ========== F1 防守系统 ==========
+    const defenseBtn = document.getElementById('defenseBtn');
+    const defenseStatus = document.getElementById('defenseStatus');
+    let defenseUntil = parseInt(localStorage.getItem('pocketfarm_defense_until') || '0');
+
+    function updateDefenseUI() {
+      const now = Date.now();
+      if (defenseUntil > now) {
+        const mins = Math.ceil((defenseUntil - now) / 60000);
+        defenseStatus.innerText = `🛡️ 防守中，剩余 ${mins} 分钟`;
+        defenseBtn.disabled = true;
+        defenseBtn.style.opacity = 0.6;
+      }
+    }
+    updateDefenseUI();
+
+    defenseBtn.onclick = () => {
+      defenseUntil = Date.now() + 60 * 60 * 1000;
+      localStorage.setItem('pocketfarm_defense_until', defenseUntil);
+      updateDefenseUI();
+      alert('🛡️ 防守已开启 1 小时');
+    };
+
+    // ========== 被偷提醒 ==========
+    const lastAlert = localStorage.getItem('pocketfarm_last_alert');
+    if (lastAlert !== today && Math.random() > 0.5) {
+      setTimeout(() => {
+        alert('🚨 你的 🍓 被 Farmer#C9 偷走了！');
+        localStorage.setItem('pocketfarm_last_alert', today);
+      }, 1200);
+    }
+  </script>
+</body>
+</html>
