@@ -5,178 +5,120 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PocketFarm</title>
   <style>
-    body {
-      margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial;
-      background: #0d0f14;
-      color: #e6e8ee;
-    }
-    .container {
-      max-width: 420px;
-      margin: 0 auto;
-      padding: 16px;
-    }
-    h1 {
-      text-align: center;
-      font-size: 22px;
-      margin-bottom: 16px;
-    }
-    .card {
-      background: #151822;
-      border-radius: 16px;
-      padding: 16px;
-      margin-bottom: 16px;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.25);
-    }
-    .section-title {
-      font-size: 15px;
-      font-weight: 600;
-      margin-bottom: 12px;
-    }
-    .btn-primary,
-    .btn-danger,
-    .btn-secondary {
-      width: 100%;
-      height: 44px;
-      border: none;
-      border-radius: 12px;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-    }
-    .btn-primary { background: #3ddc97; }
-    .btn-danger { background: #ff6b6b; margin-bottom: 8px; }
-    .btn-secondary { background: #2b2f3a; color: #e6e8ee; }
-    .actions { display: flex; flex-direction: column; }
-    .plot {
-      background: #0f1220;
-      border-radius: 12px;
-      padding: 12px;
-      margin-bottom: 8px;
-      font-size: 13px;
-    }
-    .rank-item {
-      display: flex;
-      justify-content: space-between;
-      font-size: 13px;
-      margin-bottom: 6px;
-    }
+    body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto;background:#0d0f14;color:#e6e8ee}
+    .container{max-width:420px;margin:0 auto;padding:12px 16px 80px}
+    h1{text-align:center;font-size:20px;margin:8px 0 12px}
+    .card{background:#151822;border-radius:16px;padding:16px;margin-bottom:14px}
+    .section-title{font-size:14px;font-weight:600;margin-bottom:10px}
+    .btn{width:100%;height:44px;border:none;border-radius:12px;font-weight:600;margin-bottom:8px}
+    .primary{background:#3ddc97}
+    .danger{background:#ff6b6b}
+    .secondary{background:#2b2f3a;color:#e6e8ee}
+    .hidden{display:none}
+    .item{background:#0f1220;border-radius:12px;padding:12px;margin-bottom:8px;font-size:13px;display:flex;justify-content:space-between;align-items:center}
+    .small{font-size:12px;color:#9aa3b2}
+    .tabbar{position:fixed;bottom:0;left:0;right:0;background:#111420;border-top:1px solid #1f2333;display:flex;max-width:420px;margin:0 auto}
+    .tab{flex:1;text-align:center;padding:10px 0;font-size:12px;color:#9aa3b2}
+    .tab.active{color:#3ddc97;font-weight:600}
+    .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+    .wallet{font-size:12px;background:#2b2f3a;padding:6px 10px;border-radius:10px}
   </style>
 </head>
 <body>
-  <div class="container">
+<div class="container">
+  <div class="topbar">
     <h1>🌱 PocketFarm</h1>
+    <div id="walletBtn" class="wallet">连接钱包</div>
+  </div>
 
-    <!-- E2 每日签到 -->
+  <!-- 首页 -->
+  <div id="home">
     <div class="card">
       <div class="section-title">每日签到 🌞</div>
-      <div style="display:flex;align-items:center;justify-content:space-between;background:#121620;border-radius:12px;padding:12px 14px;margin-bottom:14px">
-        <div>
-          <div style="font-size:14px;font-weight:600">今日签到状态</div>
-          <div id="checkinStatus" style="font-size:12px;color:#9aa3b2">未签到</div>
-        </div>
-        <button id="checkinBtn" class="btn-primary" style="width:88px">签到</button>
-      </div>
+      <button id="checkinBtn" class="btn primary">签到</button>
+      <div id="checkinStatus" class="small"></div>
     </div>
-
-    <!-- 我的农场 -->
     <div class="card">
-      <div class="section-title">我的农场</div>
-      <div class="plot">🥕 胡萝卜 · <span>成长中</span></div>
-      <div class="plot">🍓 草莓 · <span>成长中</span></div>
-      <div class="plot">🌽 玉米 · <span>成长中</span></div>
-    </div>
-
-    <!-- 偷菜 & 防守 -->
-    <div class="card">
-      <div class="section-title">去偷菜 🥷</div>
-      <div class="actions">
-        <button class="btn-danger" id="stealBtn">偷好友农场</button>
-        <button class="btn-secondary" id="defenseBtn">开启防守 🛡️</button>
-      </div>
-      <div id="defenseStatus" style="margin-top:10px;font-size:12px;color:#9aa3b2">防守未开启</div>
-    </div>
-
-    <!-- 排行榜（赛季） -->
-    <div class="card">
-      <div class="section-title">🏆 本周排行榜 · Season 1</div>
-      <div class="rank-item"><span>🥇 Farmer#A9</span><span>320</span></div>
-      <div class="rank-item"><span>🥈 Farmer#B2</span><span>295</span></div>
-      <div class="rank-item"><span>🥉 Farmer#C1</span><span>270</span></div>
-      <div class="rank-item"><span>You</span><span id="myScore">120</span></div>
+      <div class="section-title">好友动态</div>
+      <div class="small">👨‍🌾 Farmer#B2 偷走了 🍓</div>
+      <div class="small">👩‍🌾 Farmer#C1 防守成功</div>
     </div>
   </div>
 
-  <script>
-    // ========== E2 每日签到 ==========
-    const today = new Date().toDateString();
-    const lastCheckin = localStorage.getItem('pocketfarm_checkin');
-    const checkinBtn = document.getElementById('checkinBtn');
-    const checkinStatus = document.getElementById('checkinStatus');
+  <!-- 农场 -->
+  <div id="farm" class="hidden">
+    <div class="card">
+      <div class="section-title">我的农场</div>
+      <div class="item"><span>🥕 胡萝卜</span><span class="small">2 小时成熟</span></div>
+      <div class="item"><span>🍓 草莓</span><span class="small">5 小时成熟</span></div>
+      <div class="item"><span>🌽 玉米</span><span class="small">1 天成熟</span></div>
+    </div>
+  </div>
 
-    function updateCheckinUI() {
-      if (lastCheckin === today) {
-        checkinStatus.innerText = '已签到，作物正在成长 🌱';
-        checkinBtn.disabled = true;
-        checkinBtn.style.opacity = 0.6;
-      }
+  <!-- 好友 -->
+  <div id="friends" class="hidden">
+    <div class="card">
+      <div class="section-title">我的好友</div>
+      <div class="item"><span>Farmer#B2</span><button class="btn danger" style="width:80px;height:32px" onclick="stealFriend('B2')">偷菜</button></div>
+      <div class="item"><span>Farmer#C1</span><button class="btn danger" style="width:80px;height:32px" onclick="stealFriend('C1')">偷菜</button></div>
+    </div>
+  </div>
+
+  <!-- 排行榜 -->
+  <div id="rank" class="hidden">
+    <div class="card">
+      <div class="section-title">🏆 Season 1 排行榜</div>
+      <div class="item"><span>🥇 Farmer#A9</span><span>320</span></div>
+      <div class="item"><span>🥈 Farmer#B2</span><span>295</span></div>
+      <div class="item"><span>🥉 Farmer#C1</span><span>270</span></div>
+      <div class="item"><span>You</span><span id="myScore">120</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- Tab Bar -->
+<div class="tabbar">
+  <div class="tab active" onclick="go('home',this)">首页</div>
+  <div class="tab" onclick="go('farm',this)">农场</div>
+  <div class="tab" onclick="go('friends',this)">好友</div>
+  <div class="tab" onclick="go('rank',this)">排行</div>
+</div>
+
+<script>
+  function go(id,el){
+    ['home','farm','friends','rank'].forEach(v=>document.getElementById(v).classList.add('hidden'));
+    document.getElementById(id).classList.remove('hidden');
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    el.classList.add('active');
+  }
+
+  // 签到
+  const today=new Date().toDateString();
+  const status=document.getElementById('checkinStatus');
+  if(localStorage.getItem('pf_checkin')===today){status.innerText='已签到，作物成长中 🌱';}
+  document.getElementById('checkinBtn').onclick=()=>{localStorage.setItem('pf_checkin',today);status.innerText='签到成功！'};
+
+  // 偷好友（真实数据）
+  function stealFriend(id){
+    let score = Number(localStorage.getItem('pf_score')||120);
+    let win = Math.random()>0.4;
+    if(win){
+      score += 10;
+      alert(`✅ 成功偷了 Farmer#${id}，积分 +10`);
+    }else{
+      score = Math.max(0, score-5);
+      alert(`❌ 被 Farmer#${id} 发现了，积分 -5`);
     }
-    updateCheckinUI();
+    localStorage.setItem('pf_score',score);
+    document.getElementById('myScore').innerText = score;
+  }
 
-    checkinBtn.onclick = () => {
-      localStorage.setItem('pocketfarm_checkin', today);
-      checkinStatus.innerText = '签到成功！作物成长 +1 🌿';
-      checkinBtn.disabled = true;
-      checkinBtn.style.opacity = 0.6;
-      document.querySelectorAll('.plot span').forEach(p => p.innerText = '即将成熟');
-    };
-
-    // ========== C1 + D2 偷菜 & 连胜 ==========
-    let streak = parseInt(localStorage.getItem('pocketfarm_streak') || '0');
-    document.getElementById('stealBtn').onclick = () => {
-      const success = Math.random() > 0.4;
-      if (success) {
-        streak += 1;
-        localStorage.setItem('pocketfarm_streak', streak);
-        alert(`✅ 偷菜成功！连胜 ${streak} 次`);
-      } else {
-        streak = 0;
-        localStorage.setItem('pocketfarm_streak', '0');
-        alert('❌ 被发现了，连胜中断');
-      }
-    };
-
-    // ========== F1 防守系统 ==========
-    const defenseBtn = document.getElementById('defenseBtn');
-    const defenseStatus = document.getElementById('defenseStatus');
-    let defenseUntil = parseInt(localStorage.getItem('pocketfarm_defense_until') || '0');
-
-    function updateDefenseUI() {
-      const now = Date.now();
-      if (defenseUntil > now) {
-        const mins = Math.ceil((defenseUntil - now) / 60000);
-        defenseStatus.innerText = `🛡️ 防守中，剩余 ${mins} 分钟`;
-        defenseBtn.disabled = true;
-        defenseBtn.style.opacity = 0.6;
-      }
-    }
-    updateDefenseUI();
-
-    defenseBtn.onclick = () => {
-      defenseUntil = Date.now() + 60 * 60 * 1000;
-      localStorage.setItem('pocketfarm_defense_until', defenseUntil);
-      updateDefenseUI();
-      alert('🛡️ 防守已开启 1 小时');
-    };
-
-    // ========== 被偷提醒 ==========
-    const lastAlert = localStorage.getItem('pocketfarm_last_alert');
-    if (lastAlert !== today && Math.random() > 0.5) {
-      setTimeout(() => {
-        alert('🚨 你的 🍓 被 Farmer#C9 偷走了！');
-        localStorage.setItem('pocketfarm_last_alert', today);
-      }, 1200);
-    }
-  </script>
+  // 钱包连接
+  const walletBtn=document.getElementById('walletBtn');
+  walletBtn.onclick=async()=>{
+    if(window.ethereum){const a=await window.ethereum.request({method:'eth_requestAccounts'});walletBtn.innerText=a[0].slice(0,6)+'...';}
+    else{alert('未检测到钱包')}
+  }
+</script>
 </body>
 </html>
